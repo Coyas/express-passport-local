@@ -36,8 +36,8 @@ router.get('/dash', authenticationMiddleware(), (req, res) => {
 
 
 router.get('/cadastro', (req, res) => {
-    console.log('user is: ' + req.user)
-    console.log('user is autenticado: ' + req.isAuthenticated())
+    console.log('user cadastro is: ' + req.user)
+    console.log('user cadastro is autenticado: ' + req.isAuthenticated())
     res.render('cadastro')
 })
 router.post('/cadastro', (req, res) => {
@@ -45,7 +45,7 @@ router.post('/cadastro', (req, res) => {
     console.log('username: '+req.body.username)
     console.log('email: '+req.body.email)
     console.log('password: '+req.body.password)
-
+ 
     // criptografando a senha
     const password = req.body.password
     bcrypt.hash(password, saltRounds, function(err, hash) {
@@ -54,13 +54,17 @@ router.post('/cadastro', (req, res) => {
             username: req.body.username,
             email: req.body.email,
             password: hash
-        }).then(() => {
-            console.log('cadastro feito com sucesso')
+        }).then( user => {
+            console.log('cadastro feito com sucesso<br>*********** dados do cadastro **********************<br><br>username: '+req.body.username+'<br>email: '+req.body.email+'<br>password: '+req.body.password+'<br>password criptografado: '+hash)
+            req.login(user, (err) => {
+                console.log('login done com sucesso no registrar');
+                res.redirect('dash');
+            });
         }).catch((err) => {
             console.log('erro ao cadastrar o user: '+err)
         })
 
-        res.send('*********** dados do cadastro **********************<br><br>username: '+req.body.username+'<br>email: '+req.body.email+'<br>password: '+req.body.password+'<br>password criptografado: '+hash)
+        // res.send('*********** dados do cadastro **********************<br><br>username: '+req.body.username+'<br>email: '+req.body.email+'<br>password: '+req.body.password+'<br>password criptografado: '+hash)
     })
 })
 
