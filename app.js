@@ -52,6 +52,10 @@ app.use(passport.session());
 
 
 passport.use(new LocalStrategy(
+    // {
+    //     usernameField: 'email'
+    //     passwordField: 'password'
+    // },
     function(username, password, done) {
         console.log('local estrategy');
         console.log(username);
@@ -60,11 +64,11 @@ passport.use(new LocalStrategy(
         console.log('encima do user.findone');
         User.findOne({
             where: {
-                username: username,
+                email: username,
             }
         }).then( user => {
             if (!user) {
-                return done(null, false, { message: 'Incorrect username.' });
+                return done(null, false, { message: 'Este email parece nao existir.' });
             }
             console.log('if.bcrypt  do user.findone');
             if (!bcrypt.compareSync(password, user.password)) {
